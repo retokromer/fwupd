@@ -59,7 +59,10 @@ static void
 fu_plugin_add_security_attrs_intel_cet (FuPlugin *plugin, FuSecurityAttrs *attrs)
 {
 	FuPluginData *data = fu_plugin_get_data (plugin);
+	gint exit_status = 0xff;
+	g_autofree gchar *toolfn = NULL;
 	g_autoptr(FwupdSecurityAttr) attr = NULL;
+	g_autoptr(GError) error_local = NULL;
 
 	/* create attr */
 	attr = fwupd_security_attr_new (FWUPD_SECURITY_ATTR_ID_INTEL_CET);
@@ -71,6 +74,17 @@ fu_plugin_add_security_attrs_intel_cet (FuPlugin *plugin, FuSecurityAttrs *attrs
 	if (!data->has_cet) {
 		fwupd_security_attr_set_result (attr, FWUPD_SECURITY_ATTR_RESULT_NOT_SUPPORTED);
 		return;
+	}
+
+	/* check that userspace has been compiled for CET support */
+	toolfn = g_build_filename (FWUPD_LIBEXECDIR, "fwupd", "fwupd-detect-cet", NULL);
+	if (!g_spawn_command_line_sync (toolfn, NULL, NULL, &exit_status, &error_local)) {
+		g_warning ("failed to test CET: %s", error_local->message);
+		return;
+	}
+	if (!g_spawn_check_exit_status (exit_status, &error_local)) {
+		g_debug ("CET does not function, not supported: %s", error_local->message);
+		fwupd_security_attr_add_flag (attr, FWUPD_SECURITY_ATTR_FLAG_UNUSED);
 	}
 
 	/* success */
