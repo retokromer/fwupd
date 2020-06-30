@@ -53,6 +53,8 @@ fwupd_security_attr_flag_to_string (FwupdSecurityAttrFlags flag)
 		return "success";
 	if (flag == FWUPD_SECURITY_ATTR_FLAG_OBSOLETED)
 		return "obsoleted";
+	if (flag == FWUPD_SECURITY_ATTR_FLAG_UNUSED)
+		return "unused";
 	if (flag == FWUPD_SECURITY_ATTR_FLAG_RUNTIME_UPDATES)
 		return "runtime-updates";
 	if (flag == FWUPD_SECURITY_ATTR_FLAG_RUNTIME_ATTESTATION)

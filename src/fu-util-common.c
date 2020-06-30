@@ -1568,6 +1568,8 @@ fu_security_attr_append_str (FwupdSecurityAttr *attr, GString *str)
 		g_string_append (str, " ");
 	if (fwupd_security_attr_has_flag (attr, FWUPD_SECURITY_ATTR_FLAG_OBSOLETED)) {
 		g_string_append_printf (str, "\033[37m\033[1m%s\033[0m", fu_security_attr_get_result (attr));
+	} else if (fwupd_security_attr_has_flag (attr, FWUPD_SECURITY_ATTR_FLAG_UNUSED)) {
+		g_string_append_printf (str, "\033[33m\033[1m%s\033[0m", fu_security_attr_get_result (attr));
 	} else if (fwupd_security_attr_has_flag (attr, FWUPD_SECURITY_ATTR_FLAG_SUCCESS)) {
 		g_string_append_printf (str, "\033[32m\033[1m%s\033[0m", fu_security_attr_get_result (attr));
 	} else {
@@ -1580,6 +1582,11 @@ fu_security_attr_append_str (FwupdSecurityAttr *attr, GString *str)
 	if (fwupd_security_attr_has_flag (attr, FWUPD_SECURITY_ATTR_FLAG_OBSOLETED)) {
 		/* TRANSLATORS: this is shown as a suffix for obsoleted tests */
 		g_string_append_printf (str, " %s", _("(obsoleted)"));
+	}
+	if (fwupd_security_attr_has_flag (attr, FWUPD_SECURITY_ATTR_FLAG_UNUSED)) {
+		/* TRANSLATORS: this is shown as a suffix for features that
+		 * were available but were unused */
+		g_string_append_printf (str, " %s", _("(unused)"));
 	}
 	g_string_append_printf (str, "\n");
 }
